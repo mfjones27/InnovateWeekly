@@ -1,4 +1,4 @@
 // Single source of truth for the backend URL.
-// Override in production by setting REACT_APP_API_BASE_URL.
+// Override in production by setting VITE_API_BASE_URL at build time.
 export const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
