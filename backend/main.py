@@ -15,6 +15,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from uuid import uuid4
 
+import os
+
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -33,16 +35,15 @@ app = FastAPI(
     description="Internal tool for weekly status check-ins and emerging-tech evaluations.",
 )
 
-# CORS — allow the local React dev server plus typical deployed origins.
+# CORS — the local dev server, plus the deployed frontend's exact origin(s) from
+# FRONTEND_ORIGINS (comma-separated, e.g. "https://innovate-weekly.vercel.app").
+# A wildcard like *.vercel.app would let anyone's Vercel site call this API.
+_DEV_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173"]
+_DEPLOYED_ORIGINS = [o.strip().rstrip("/") for o in os.getenv("FRONTEND_ORIGINS", "").split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",  # Vite default, in case the frontend is migrated
-    ],
-    allow_origin_regex=r"https?://.*\.(vercel|netlify|onrender)\.app",
-    allow_credentials=True,
+    allow_origins=_DEV_ORIGINS + _DEPLOYED_ORIGINS,
+    allow_credentials=False,  # the frontend doesn't use cookies
     allow_methods=["*"],
     allow_headers=["*"],
 )

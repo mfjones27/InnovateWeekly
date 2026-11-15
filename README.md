@@ -60,12 +60,12 @@ npm install
 npm start
 ```
 
-The dev server runs at http://localhost:3000 and is configured (via CORS on the backend and `proxy` in `package.json`) to call the FastAPI service at http://localhost:8000.
+The frontend is built with [Vite](https://vite.dev). The dev server runs at http://localhost:3000 and calls the FastAPI service at http://localhost:8000 (allowed by the backend's CORS config).
 
-To override the API base URL (e.g. in production), set:
+To override the API base URL (e.g. in production), set this at build time:
 
 ```
-REACT_APP_API_BASE_URL=https://your-api.example.com
+VITE_API_BASE_URL=https://your-api.example.com
 ```
 
 ## CSV export
@@ -75,5 +75,5 @@ The "Export CSV" button on the dashboard generates a CSV from the **currently fi
 ## Deployment notes (free options)
 
 - **Backend:** Render or Railway — point to `backend/` with start command `uvicorn main:app --host 0.0.0.0 --port $PORT`. Mount a persistent disk so `data/submissions.json` survives restarts.
-- **Frontend:** Netlify or Vercel — build command `npm run build`, publish `build/`. Set `REACT_APP_API_BASE_URL` to the deployed backend URL.
-- The backend's CORS config already allows `*.vercel.app`, `*.netlify.app`, and `*.onrender.com` origins.
+- **Frontend:** Netlify or Vercel — build command `npm run build`, publish `build/`. Set `VITE_API_BASE_URL` to the deployed backend URL.
+- On the backend, set `FRONTEND_ORIGINS` to your deployed frontend's exact origin (comma-separated if more than one), e.g. `FRONTEND_ORIGINS=https://innovate-weekly.vercel.app`. Only those origins, plus localhost for development, are allowed by CORS.
